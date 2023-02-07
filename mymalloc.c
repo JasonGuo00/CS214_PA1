@@ -121,3 +121,17 @@ void myfree(void* ptr, char* file, int line){
 	//set chunk allocation byte to freed/unallocated
 	memory[i+4] = 0;
 }
+
+void* myrealloc(void* ptr, size_t s, char* file, int line){
+	myfree(ptr, file, line);
+
+	void* new_ptr = mymalloc(s, file, line);
+	int old_ptr_index = ((byte*) ptr)-(&memory[0]); //subtract memory addresses to get index in memory
+	unsigned payload_size_of_old_ptr = GETSIZE(old_ptr_index); //check how many bytes we have to copy
+	if (new_ptr != ptr){
+		//only memcpy if we had to move the chunk somewhere else
+		memcpy(new_ptr, ptr, payload_size_of_old_ptr);
+	}
+
+	return new_ptr;
+}

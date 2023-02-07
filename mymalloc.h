@@ -10,8 +10,10 @@
 	
 	void* mymalloc(size_t s, char* file, int line);
 	void myfree(void* ptr, char* file, int line);
-	
+	void* myrealloc(void* ptr, size_t s, char* file, int line);
+
 	#define malloc(s) mymalloc(s, __FILE__, __LINE__)
 	#define free(ptr) myfree(ptr, __FILE__, __LINE__)
+	#define realloc(ptr, s) myrealloc(ptr, s, __FILE__, __LINE__)
 	
 #endif
