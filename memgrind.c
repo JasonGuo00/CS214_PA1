@@ -4,12 +4,13 @@
 #include <stdio.h>
 
 struct timeval stopwatch;
+struct timeval before, after;
 
-double t0;
-double t1;
+long double t0;
+long double t1;
 
 void set_stopwatch(){
-	double* ptr;
+	long double* ptr;
 	gettimeofday(&stopwatch, NULL);
 	if (t1 >= t0){
 		ptr = &t0;
@@ -17,7 +18,7 @@ void set_stopwatch(){
 	else{
 		ptr = &t1;
 	}
-	*ptr = stopwatch.tv_sec + (stopwatch.tv_usec/1000000.0);
+	*ptr = (stopwatch.tv_usec) + (stopwatch.tv_usec);
 }
 
 int main(int argc, char* argv[argc+1]){
@@ -30,27 +31,27 @@ int main(int argc, char* argv[argc+1]){
 	size_t s = sizeof(char);
 
 	//Task 1//
-		double time = 0;
+		long double time = 0;
 		for(int z = 0; z < 50; z++) {
-			set_stopwatch();
+			gettimeofday(&before, NULL);
 
 			for (int i = 0; i < runs; i++){
 				void* ptr = malloc(s);
 				free(ptr);
 			}
 		
-			set_stopwatch();
-			printf("Task 1 Time: %lf seconds\n", t1-t0);
-			time += (t1-t0);
+			gettimeofday(&after, NULL);
+			// printf("Task 1 Time: %lf seconds\n", t1-t0);
+			time += (after.tv_usec-before.tv_usec);
 		}
-		printf("Task 1 Average Time: %lf seconds\n", time/50);
+		printf("Task 1 Average Time: %Lf microseconds\n", time/50.0);
 		
 	//--//
 
 	//Task 2//
 		time = 0;
 		for(int z = 0; z < 50; z++) {
-			set_stopwatch();
+			gettimeofday(&before, NULL);
 
 			void* ptr_array[runs];
 			
@@ -61,18 +62,18 @@ int main(int argc, char* argv[argc+1]){
 				free(ptr_array[i]);
 			}
 
-			set_stopwatch();
-			time += (t1-t0);
-			printf("Task 2 Time: %lf seconds\n", t1-t0);
+			gettimeofday(&after, NULL);
+			time += (after.tv_usec-before.tv_usec);
+			// printf("Task 2 Time: %lf seconds\n", t1-t0);
 		}
-		printf("Task 2 Average Time: %lf seconds\n", time / 50);
+		printf("Task 2 Average Time: %Lf microseconds\n", time / 50.0);
 		
 	//--//
 
 	//Task 3//
 		time = 0;
 		for(int z = 0; z < 50; z++) {
-			set_stopwatch();
+			gettimeofday(&before, NULL);
 			int num_mallocs = 0;
 			int open_space = 0;
 
@@ -99,18 +100,18 @@ int main(int argc, char* argv[argc+1]){
 				free(ptr_array2[i]);
 			}
 
-			set_stopwatch();
-			time += (t1-t0);
-			printf("Task 3 Time: %lf seconds\n", t1-t0);
+			gettimeofday(&after, NULL);
+			time += (after.tv_usec-before.tv_usec);
+			// printf("Task 3 Time: %lf seconds\n", t1-t0);
 		}
-		printf("Task 3 Average Time: %lf seconds\n", time / 50);
+		printf("Task 3 Average Time: %Lf microseconds\n", time / 50.0);
 		
 	//--//
 
 	//Task 4//
 		time = 0;
 		for(int z = 0; z < 50; z++) {
-			set_stopwatch();
+			gettimeofday(&before, NULL);
 
 			char* str = malloc(5);
 			str[0] = 't';
@@ -124,18 +125,18 @@ int main(int argc, char* argv[argc+1]){
 			printf("%s\n", str);
 			free(str);
 
-			set_stopwatch();
-			time += (t1-t0);
-			printf("Task 4 Time: %lf seconds\n", t1-t0);
+			gettimeofday(&after, NULL);
+			time += (after.tv_usec-before.tv_usec);
+			// printf("Task 4 Time: %lf seconds\n", t1-t0);
 		}
-		printf("Task 4 Average Time: %lf seconds \n", time / 50);
+		printf("Task 4 Average Time: %Lf microseconds \n", time / 50.0);
 		
 	//--//
 
 	//Task 5//
 		time = 0;
 		for(int z = 0; z < 50; z++) {
-			set_stopwatch();
+			gettimeofday(&before, NULL);
 
 			void* ptr_array3[runs];
 
@@ -155,11 +156,11 @@ int main(int argc, char* argv[argc+1]){
 
 			printf("Amount Allocated in Run %d of Task 5: %d\n", z, amt_allocated);
 
-			set_stopwatch();
-			printf("Task 5 Time: %lf seconds\n", t1-t0);
-			time += (t1-t0);
+			gettimeofday(&after, NULL);
+			// printf("Task 5 Time: %lf seconds\n", t1-t0);
+			time += (after.tv_usec-before.tv_usec);
 		}
-		printf("Task 5 Average Time: %lf seconds\n", time / 50);
+		printf("Task 5 Average Time: %Lf microseconds\n", time / 50.0);
 		
 	//--//
 
