@@ -3,23 +3,10 @@
 #include "mymalloc.h"
 #include <stdio.h>
 
-struct timeval stopwatch;
 struct timeval before, after;
 
 long double t0;
 long double t1;
-
-void set_stopwatch(){
-	long double* ptr;
-	gettimeofday(&stopwatch, NULL);
-	if (t1 >= t0){
-		ptr = &t0;
-	}
-	else{
-		ptr = &t1;
-	}
-	*ptr = (stopwatch.tv_usec) + (stopwatch.tv_usec);
-}
 
 int main(int argc, char* argv[argc+1]){
 
