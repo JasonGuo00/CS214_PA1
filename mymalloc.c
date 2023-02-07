@@ -2,6 +2,8 @@
 #include "mymalloc.h"
 #include <stdio.h>
 
+#define GETSIZE(INDEX) *((unsigned int*)&memory[INDEX])
+
 static byte memory[MAX_BYTES];
 
 // to retrive the "size" of the memory chunk:  *((unsigned int*) &memory[i])
@@ -17,15 +19,15 @@ void* mymalloc(size_t size, char* file, int line){
 	//memory[i -> i+1] = size, memory[i+2] = true or false if allocated
 	int seq_space_found = 0;
 	int i;
-	for (i = 0; i+size+5 < MAX_BYTES; i += *((unsigned int*) &memory[i]) + 5){
-		int chunk_size = *((unsigned int*) &memory[i]);
+	for (i = 0; i+size+5 < MAX_BYTES; i += GETSIZE(i) + 5){
+		unsigned int chunk_size = GETSIZE(i);
 		char is_allocated = memory[i+4];
 		if (is_allocated == 0){
 			if (chunk_size == 0){
 				//This chunk has never been allocated before,
 				//meaning no bytes ahead of it have been allocated either, so we
 				//don't need to worry about overwriting
-				*((unsigned int*) &memory[i]) = size;
+				GETSIZE(i) = size;
 				memory[i+4] = 1;
 				payload_ptr = &(memory[i+5]);
 				//finished allocating, stop searching
@@ -40,7 +42,7 @@ void* mymalloc(size_t size, char* file, int line){
 				else {
 					//found enough unallocated space, allocate chunk(s)
 					int new_header_index = i - seq_space_found;
-					*((unsigned int*)&memory[new_header_index]) = size;
+					GETSIZE(new_header_index) = size;
 					memory[new_header_index+4] = 1;
 					payload_ptr = &(memory[new_header_index+5]);
 					
@@ -49,14 +51,14 @@ void* mymalloc(size_t size, char* file, int line){
 					if (bytes_left >= 6){
 						//there is room for another chunk, so split into two
 						int split_header_index = new_header_index+5+size;
-						*((unsigned int*) &memory[split_header_index]) = bytes_left;
+						GETSIZE(split_header_index) = bytes_left-5;
 						memory[split_header_index+4] = 0;
 					}
 					else{
 						//there are a couple extra bytes in this chunk but not enough to 
 						//split the chunk into two. include these spare bytes in the chunk 
 						//we just allocated
-						*((unsigned int*) &memory[new_header_index]) += bytes_left;
+						GETSIZE(new_header_index) += bytes_left;
 					}
 
 					//finished allocating, stop searching
@@ -92,12 +94,12 @@ void myfree(void* ptr, char* file, int line){
 	bool isPayloadHeader = false;
 	
 	int i;
-	for (i = 0; i < MAX_BYTES; i += *((unsigned int*) &memory[i])+5){
+	for (i = 0; i < MAX_BYTES; i += GETSIZE(i)+5){
 		if (&(memory[i+5]) == ptr){
 			isPayloadHeader = true;
 			break;
 		}
-		if (*((unsigned int*) &memory[i])+5 == 0){
+		if (GETSIZE(i)+5 == 0){
 			//not supposed to happen, but if it somehow does, throw the "pointer
 			//does not point to payload header error" to prevent infinite loop
 			break;
