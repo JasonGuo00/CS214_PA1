@@ -9,11 +9,11 @@ static byte memory[MAX_BYTES];
 // to retrive the "size" of the memory chunk:  *((unsigned int*) &memory[i])
 
 void* mymalloc(size_t size, char* file, int line){
-	if (size == 0){
-		return (void*) 0;
-	}
-
 	void* payload_ptr = 0;
+
+	if (size == 0){
+		return payload_ptr; //return 0 ptr
+	}
 		
 	//memory[i] is start of chunk header
 	//memory[i -> i+1] = size, memory[i+2] = true or false if allocated
