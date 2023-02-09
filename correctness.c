@@ -57,8 +57,35 @@ int main(int argc, char** argv) {
 
     char* word = malloc(sizeof(char)*5);
     printf("Pointer to word: %p, should be the same address as the previous head node was.  Proof that free properly deallocated memory\n",word);
-
+    free(word);
     
+    // Testing Merging of Memory Chunks
+    int* temp1 = malloc(sizeof(int)*10);
+    int* temp2 = malloc(sizeof(int)*16);
+    int* temp3 = malloc(sizeof(int)*6);
+    printf("Temp 1 has address: %p\n", temp1);
+    printf("Temp 3 has address: %p\n", temp3);
+    // Temp1 and Temp2 have a combined size of 4*10 + 4*16
+    free(temp1);
+    free(temp2);
+    free(temp3);
+    int* temp4 = malloc(sizeof(int)*26);
+    int* temp5 = malloc(sizeof(int));
+    printf("Temp 4 has address: %p\n", temp4); // Should have same address as temp1, chunks of temp1 and temp2 should
+                                               // have merged to one.  Extra 5 bytes from 2nd header should be included
+    printf("Temp 5 has address: %p\n", temp5); // Should have same address as temp 3 if merge worked properly
+    free(temp4);
+    free(temp5);
+    int* temp6 = malloc(sizeof(int)*4);
+    int* temp7 = malloc(sizeof(int)*22);
+    int* temp8 = malloc(sizeof(int));
+    // larger chunk with 4*26 bytes should split into 2 chunks of size 4*4 and 4*22 
+    printf("Temp 6 has address: %p\n", temp6);  // Should be equal to temp1 and temp4
+    printf("Temp 7 address is: %ld from Temp 6\n", (char*)temp7 - (char*)temp6);  // Should equal (4*4 + 5 (meta offset) = 21)
+    printf("Temp 8 has address: %p\n", temp8);  // Should be the same as temp3 and temp5 if merge and split works
+    free(temp6);
+    free(temp7);
+    free(temp8);
 
 
 }
