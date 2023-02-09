@@ -13,6 +13,7 @@ int main(int argc, char** argv) {
     };
     // Create a head node containing the value 100
     struct Node* head = malloc(sizeof(struct Node));
+    printf("Pointer to the Head Node: %p\n", head);
     head->data = 100;
     char* n = malloc(sizeof(char)*5);
     n[0] = 'H'; n[1] = 'E'; n[2] = 'A'; n[3] = 'D'; n[4] = '\0';
@@ -23,6 +24,7 @@ int main(int argc, char** argv) {
         struct Node* new = malloc(sizeof(struct Node));
         new->data = i;
         new->next = NULL;
+        // Each node also has a dynamically size "string"
         char* name = malloc(sizeof(char)*(i+2));
         name[i+1] = '\0';
         for(int x = 0; x < i+1; x++) {
@@ -52,6 +54,9 @@ int main(int argc, char** argv) {
     printf("Node 4 contains the value: 3 and the name: aaaa\n");
     printf("Node 5 contains the value: 4 and the name: aaaaa\n");
     printf("---------------\n");
+
+    char* word = malloc(sizeof(char)*5);
+    printf("Pointer to word: %p, should be the same address as the previous head node was.  Proof that free properly deallocated memory\n",word);
 
     
 
