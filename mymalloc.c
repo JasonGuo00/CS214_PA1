@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "mymalloc.h"
 #include <stdio.h>
+#include <string.h>
 
 #define GETSIZE(INDEX) *((unsigned int*)&memory[INDEX])
 
