@@ -59,6 +59,9 @@ int main(int argc, char** argv) {
     printf("Pointer to word: %p, should be the same address as the previous head node was.  Proof that free properly deallocated memory\n",word);
     free(word);
     
+
+
+    
     // Testing Merging of Memory Chunks
     int* temp1 = malloc(sizeof(int)*10);
     int* temp2 = malloc(sizeof(int)*16);
