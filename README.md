@@ -3,7 +3,7 @@
 Jason Guo, Net ID: jg1715
 Armen do your thing here bub
 
-Test Plan Information:
+----------Correctness Test Plan Information----------
 
 Test 1: Linked List  
 
@@ -27,4 +27,9 @@ Free the 3 pointers, make 2 new ones, the first of them being the same size as t
 
 To check that this succeeded, fourth pointer should have the same address as first pointer, and fifth pointer should have the same address as third pointer.  
 
-Further tests splitting by freeing fourth and fifth pointers, then creating three new pointers (6-8).  Sixth and seventh pointers should have sizes that add up to that of the larger chunk's (26 * 4 bytes).  Printing out the sixth and eigth pointers should result in the same addresses as first and third pointers respectively.
+Further tests splitting by freeing fourth and fifth pointers, then creating three new pointers (6-8).  Sixth and seventh pointers should have sizes that add up to that of the larger chunk's (26 * 4 bytes).  Printing out the sixth and eigth pointers should result in the same addresses as first and third pointers respectively.  
+------------------------------------------------  
+----------Performance Test Information----------  
+Stress Test 4:  
+Stress Test 5: Allocate 120 chunks, each of random size from 1-28.  At the end of allocation, print out the total number of bytes allocated (not including bytes for meta data) and free all allocations.  
+------------------------------------------------
