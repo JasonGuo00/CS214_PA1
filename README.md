@@ -28,6 +28,13 @@ Free the 3 pointers, make 2 new ones, the first of them being the same size as t
 To check that this succeeded, fourth pointer should have the same address as first pointer, and fifth pointer should have the same address as third pointer.  
 
 Further tests splitting by freeing fourth and fifth pointers, then creating three new pointers (6-8).  Sixth and seventh pointers should have sizes that add up to that of the larger chunk's (26 * 4 bytes).  Printing out the sixth and eigth pointers should result in the same addresses as first and third pointers respectively.  
+
+Test 3: Errors
+
+Briefly test if 3 error types are handled properly:
+1. Allocate more memory than available
+2. Attempt to free a pointer not obtained through malloc
+3. Attempt to free an unallocated / freed memory address
 ------------------------------------------------  
 ----------Performance Test Information----------  
 Stress Test 4:  

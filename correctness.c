@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
     
 
 
-    
+
     // Testing Merging of Memory Chunks
     int* temp1 = malloc(sizeof(int)*10);
     int* temp2 = malloc(sizeof(int)*16);
@@ -89,6 +89,18 @@ int main(int argc, char** argv) {
     free(temp6);
     free(temp7);
     free(temp8);
+
+
+    // Test error when allocating more bytes than available
+    int* error = malloc(sizeof(char)*10000);
+    printf("%p\n",error);
+    // Test error when pointer is not obtained from malloc
+    int error2 = 12345;
+    free(&error2);
+    // Test error when trying to free freed / unallocated memory
+    struct Node* error3 = malloc(sizeof(struct Node));
+    free(error3);
+    free(error3);
 
 
 }
