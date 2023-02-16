@@ -28,9 +28,10 @@ void* mymalloc(size_t size, char* file, int line){
 				//This chunk has never been allocated before,
 				//meaning no bytes ahead of it have been allocated either, so we
 				//don't need to worry about overwriting
-				GETSIZE(i) = size;
-				memory[i+4] = 1;
-				payload_ptr = &(memory[i+5]);
+				int new_header_index = i - seq_space_found;
+				GETSIZE(new_header_index) = size;
+				memory[new_header_index+4] = 1;
+				payload_ptr = &(memory[new_header_index+5]);
 				//finished allocating, stop searching
 				break;
 			}
@@ -56,10 +57,32 @@ void* mymalloc(size_t size, char* file, int line){
 						memory[split_header_index+4] = 0;
 					}
 					else{
-						//there are a couple extra bytes in this chunk but not enough to 
-						//split the chunk into two. include these spare bytes in the chunk 
-						//we just allocated
-						GETSIZE(new_header_index) += bytes_left;
+						//there are a few extra bytes in this chunk but not enough to 
+						//split it into two. the following decides how to handle the spare bytes
+						int next_chunk_header_index = i + 5 + chunk_size;
+						if (next_chunk_header_index+5 < MAX_BYTES){
+							//made sure another chunk exists
+							int isAllocated = memory[next_chunk_header_index+4];
+							if (!isAllocated){
+								//next chunk is open
+								int next_chunk_size = GETSIZE(next_chunk_header_index);
+								if (next_chunk_size > 0){
+									//next chunk has been allocated before but is not currently,
+									//so merge
+									next_chunk_header_index = new_header_index + 5 + size;
+									GETSIZE(next_chunk_header_index) = next_chunk_size + bytes_left;
+									memory[next_chunk_header_index+4] = 0;
+								}
+							}
+							else{
+								//next chunk is also allocated, so just tag these bytes on
+								GETSIZE(new_header_index) += bytes_left;
+							}
+						}
+						else{
+							//end of the memory array, no room for another chunk so tag the remainign on
+							GETSIZE(new_header_index) += bytes_left;
+						}
 					}
 
 					//finished allocating, stop searching
@@ -95,14 +118,10 @@ void myfree(void* ptr, char* file, int line){
 	bool isPayloadHeader = false;
 	
 	int i;
-	for (i = 0; i < MAX_BYTES; i += GETSIZE(i)+5){
+	//make sure size of the ith chunk is not 0 (this means that the chunk)
+	for (i = 0; i < MAX_BYTES && GETSIZE(i) > 0; i += GETSIZE(i)+5){
 		if (&(memory[i+5]) == ptr){
 			isPayloadHeader = true;
-			break;
-		}
-		if (GETSIZE(i)+5 == 0){
-			//not supposed to happen, but if it somehow does, throw the "pointer
-			//does not point to payload header error" to prevent infinite loop
 			break;
 		}
 	}
@@ -127,10 +146,10 @@ void* myrealloc(void* ptr, size_t s, char* file, int line){
 	myfree(ptr, file, line);
 
 	void* new_ptr = mymalloc(s, file, line);
-	int old_ptr_index = ((byte*) ptr)-(&memory[0]); //subtract memory addresses to get index in memory
-	unsigned payload_size_of_old_ptr = GETSIZE(old_ptr_index); //check how many bytes we have to copy
 	if (new_ptr != ptr){
-		//only memcpy if we had to move the chunk somewhere else
+		//only memcpy if we had to move the chunk header somewhere else
+		int old_ptr_index = ((byte*) ptr)-(&memory[0]); //subtract addresses to get index in memory
+		unsigned payload_size_of_old_ptr = GETSIZE(old_ptr_index); //check how many bytes we have to copy
 		memcpy(new_ptr, ptr, payload_size_of_old_ptr);
 	}
 
