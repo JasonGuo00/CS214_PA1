@@ -1,4 +1,5 @@
 #include <sys/time.h>
+#include <time.h>
 #include <stdlib.h>
 #include "mymalloc.h"
 #include <stdio.h>
