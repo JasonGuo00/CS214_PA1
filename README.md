@@ -7,7 +7,8 @@ Armen do your thing here bub
 
 Test 1: Linked List  
 
-To test if malloc was capable of running as intended, we created and filled  out a linked list to see if the data is stored properly.  
+To test if malloc was capable of running as intended, we created and filled  out a linked list to see if the data is stored properly.  Running this test, we should also be able to see if any data was overwritten by whether or not the the printed results
+contain the correct information (Node number, corresponding string, etc.).
 
 Each Node structure is 20 (or 12 on 32 bit machine) bytes, 4 bytes from the integer data type, 8 bytes from the char pointer, and 8 bytes from the struct Node pointer.  
 
