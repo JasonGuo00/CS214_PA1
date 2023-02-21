@@ -60,6 +60,6 @@ For the "unable to allocate" error, we print this only if our for-loop through t
 
 For the "pointer not obtained with malloc" error, we print this when the pointer is not within the bounds of the memory array. We test this by checking if the pointer's numerical address is less than the address at memory\[0\] or greater than the address at memory\[MAX_BYTES-1\].
 
-For the "pointer does not point to payload header" error, we print this when, while looping through every chunk header, we are unable to locate the pointer we are trying to free in any of the chunk headers.
+For the "pointer does not point to payload header" error, we print this when, while checking every chunk header, we are unable to locate the pointer we are trying to free in any of the chunk headers.
 
 For the "attempt to free freed/unallocated space" error, we print this when the "isAllocated" byte of the payload pointer's chunk header is equal to 0, as this indicates that the chunk is not allocated/has been freed.
