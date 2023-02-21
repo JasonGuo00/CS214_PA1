@@ -19,12 +19,13 @@ void* mymalloc(size_t size, char* file, int line){
 	//memory[i] is start of chunk header
 	//memory[i -> i+1] = size, memory[i+2] = true or false if allocated
 	int seq_space_found = 0;
-	int i;
-	for (i = 0; i+size+5 < MAX_BYTES; i += GETSIZE(i) + 5){
+	size_t i;
+	for (i = 0; i-seq_space_found+size+5 < MAX_BYTES; i += GETSIZE(i) + 5){
 		unsigned int chunk_size = GETSIZE(i);
 		char is_allocated = memory[i+4];
 		if (is_allocated == 0){
 			if (chunk_size == 0){
+				//printf("found unallocated space at %zu\n", i);
 				//This chunk has never been allocated before,
 				//meaning no bytes ahead of it have been allocated either, so we
 				//don't need to worry about overwriting
@@ -58,19 +59,27 @@ void* mymalloc(size_t size, char* file, int line){
 					}
 					else{
 						//there are a few extra bytes in this chunk but not enough to 
-						//split it into two. the following decides how to handle the spare bytes
+						//split it into two. the following decides how to handle the spare bytes:
+
 						int next_chunk_header_index = i + 5 + chunk_size;
 						if (next_chunk_header_index+5 < MAX_BYTES){
-							//made sure another chunk exists
+							//made sure another chunk exists (check if there's room for a payload
+							//of size 1)
 							int isAllocated = memory[next_chunk_header_index+4];
 							if (!isAllocated){
 								//next chunk is open
 								int next_chunk_size = GETSIZE(next_chunk_header_index);
+								next_chunk_header_index = new_header_index + 5 + size;
 								if (next_chunk_size > 0){
-									//next chunk has been allocated before but is not currently,
-									//so merge
-									next_chunk_header_index = new_header_index + 5 + size;
+									//next chunk has been allocated before but it is not
+									//currently, so merge
 									GETSIZE(next_chunk_header_index) = next_chunk_size + bytes_left;
+									memory[next_chunk_header_index+4] = 0;
+								}
+								else{
+									//there are unallocated bytes so make the smallest chunk possible
+									//it will be expanded
+									GETSIZE(next_chunk_header_index) = 0;
 									memory[next_chunk_header_index+4] = 0;
 								}
 							}
@@ -80,7 +89,8 @@ void* mymalloc(size_t size, char* file, int line){
 							}
 						}
 						else{
-							//end of the memory array, no room for another chunk so tag the remainign on
+							//end of the memory array, no room for another chunk so tag 
+							//the remaining bytes on
 							GETSIZE(new_header_index) += bytes_left;
 						}
 					}
