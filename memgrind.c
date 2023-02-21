@@ -1,5 +1,4 @@
 #include <sys/time.h>
-#include <time.h>
 #include <stdlib.h>
 #include "mymalloc.h"
 #include <stdio.h>
@@ -9,17 +8,26 @@ struct timeval before, after;
 long double t0;
 long double t1;
 
+struct node{
+	char message;
+	struct node* next;
+};
+
+void free_ll(struct node* ptr){
+	if (ptr->next != NULL){
+		free_ll(ptr->next);
+	}
+	free(ptr);
+}
+
 int main(int argc, char* argv[argc+1]){
 
 	int runs = 120;
 
-	time_t t;
-	srand((unsigned) time(&t));
-
 	size_t s = sizeof(char);
 
 	//Task 1//
-		long double time = 0;
+		long double timer = 0;
 		for(int z = 0; z < 50; z++) {
 			gettimeofday(&before, NULL);
 
@@ -30,14 +38,19 @@ int main(int argc, char* argv[argc+1]){
 		
 			gettimeofday(&after, NULL);
 			// printf("Task 1 Time: %lf seconds\n", t1-t0);
-			time += (after.tv_usec-before.tv_usec);
+			if (before.tv_usec > after.tv_usec){
+				timer += (1000000-after.tv_usec+before.tv_usec);
+			}
+			else{
+				timer += (after.tv_usec-before.tv_usec);
+			}
 		}
-		printf("Task 1 Average Time: %Lf microseconds\n", time/50.0);
+		printf("Task 1 Average Time: %Lf microseconds\n", timer/50.0);
 		
 	//--//
 
 	//Task 2//
-		time = 0;
+		timer = 0;
 		for(int z = 0; z < 50; z++) {
 			gettimeofday(&before, NULL);
 
@@ -51,15 +64,20 @@ int main(int argc, char* argv[argc+1]){
 			}
 
 			gettimeofday(&after, NULL);
-			time += (after.tv_usec-before.tv_usec);
+			if (before.tv_usec > after.tv_usec){
+				timer += (1000000-after.tv_usec+before.tv_usec);
+			}
+			else{
+				timer += (after.tv_usec-before.tv_usec);
+			}
 			// printf("Task 2 Time: %lf seconds\n", t1-t0);
 		}
-		printf("Task 2 Average Time: %Lf microseconds\n", time / 50.0);
+		printf("Task 2 Average Time: %Lf microseconds\n", timer / 50.0);
 		
 	//--//
 
 	//Task 3//
-		time = 0;
+		timer = 0;
 		for(int z = 0; z < 50; z++) {
 			gettimeofday(&before, NULL);
 			int num_mallocs = 0;
@@ -89,40 +107,56 @@ int main(int argc, char* argv[argc+1]){
 			}
 
 			gettimeofday(&after, NULL);
-			time += (after.tv_usec-before.tv_usec);
+			if (before.tv_usec > after.tv_usec){
+				timer += (1000000-after.tv_usec+before.tv_usec);
+			}
+			else{
+				timer += (after.tv_usec-before.tv_usec);
+			}
 			// printf("Task 3 Time: %lf seconds\n", t1-t0);
 		}
-		printf("Task 3 Average Time: %Lf microseconds\n", time / 50.0);
-		
+		printf("Task 3 Average Time: %Lf microseconds\n", timer / 50.0);
 	//--//
-
+	
 	//Task 4//
-		time = 0;
+		timer = 0;
 		for(int z = 0; z < 50; z++) {
 			gettimeofday(&before, NULL);
 
-			char* str = malloc(5);
-			str[0] = 't';
-			str[1] = 'e';
-			str[2] = 's';
-			str[3] = 't';
-			str[4] = 0;
-
-			// printf("%d\n", rand());
-
-			printf("%s\n", str);
-			free(str);
+			int num_lines = 0;
+			struct node* prev = 0;
+			struct node* head = 0;
+			for (int i = 0; i < 26; i++){
+				num_lines++;
+				struct node* new_node = (struct node*) malloc(sizeof(struct node));
+				new_node->next = NULL;
+				new_node->message = 65+i;
+				if (prev != 0){
+					prev->next = new_node;
+				}
+				else{
+					head = new_node;
+				}
+				prev = new_node;
+			}
+			
+			free_ll(head);
 
 			gettimeofday(&after, NULL);
-			time += (after.tv_usec-before.tv_usec);
+			if (before.tv_usec > after.tv_usec){
+				timer += (1000000-after.tv_usec+before.tv_usec);
+			}
+			else{
+				timer += (after.tv_usec-before.tv_usec);
+			}
 			// printf("Task 4 Time: %lf seconds\n", t1-t0);
 		}
-		printf("Task 4 Average Time: %Lf microseconds \n", time / 50.0);
+		printf("Task 4 Average Time: %Lf microseconds \n", timer / 50.0);
 		
 	//--//
 
 	//Task 5//
-		time = 0;
+		timer = 0;
 		for(int z = 0; z < 50; z++) {
 			gettimeofday(&before, NULL);
 
@@ -142,13 +176,18 @@ int main(int argc, char* argv[argc+1]){
 				free(ptr_array3[i]);
 			}
 
-			printf("Amount Allocated in Run %d of Task 5: %d\n", z, amt_allocated);
+			//printf("Amount Allocated in Run %d of Task 5: %d\n", z, amt_allocated);
 
 			gettimeofday(&after, NULL);
 			// printf("Task 5 Time: %lf seconds\n", t1-t0);
-			time += (after.tv_usec-before.tv_usec);
+			if (before.tv_usec > after.tv_usec){
+				timer += (1000000-after.tv_usec+before.tv_usec);
+			}
+			else{
+				timer += (after.tv_usec-before.tv_usec);
+			}
 		}
-		printf("Task 5 Average Time: %Lf microseconds\n", time / 50.0);
+		printf("Task 5 Average Time: %Lf microseconds\n", timer / 50.0);
 		
 	//--//
 

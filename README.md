@@ -1,7 +1,7 @@
 # CS214_PA1
 
 Jason Guo, Net ID: jg1715
-Armen do your thing here bub
+Armen Karakashian, Net ID: avk56
 
 ----------Correctness Test Plan Information----------
 
@@ -36,8 +36,19 @@ Briefly test if 3 error types are handled properly:
 1. Allocate more memory than available
 2. Attempt to free a pointer not obtained through malloc
 3. Attempt to free an unallocated / freed memory address
+
+Test 4: Overlapping chunks
+
+Allocate 3 large chunks that use up the entirety of the memory array.
+
+Number every byte in each of the payloads to 1,2,3 for the first, second and third chunk respectively.
+
+Loop through every byte in the payload and make sure they did not change after a new chunk was allocated (i.e. make sure every byte in Chunk 1's payload is 1)
+
+Do this 50 times and print if there is overlap/incorrect data detected in the payloads.
+
 ------------------------------------------------  
 ----------Performance Test Information----------  
-Stress Test 4:  
-Stress Test 5: Allocate 120 chunks, each of random size from 1-28.  At the end of allocation, print out the total number of bytes allocated (not including bytes for meta data) and free all allocations.  
+Stress Test 4: Create a linked list with 26 nodes and free it
+Stress Test 5: Allocate 120 chunks, each of random size from 1-28.  Free all of the chunks at the end.  
 ------------------------------------------------

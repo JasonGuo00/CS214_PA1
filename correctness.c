@@ -3,6 +3,7 @@
 #include "mymalloc.h"
 
 int main(int argc, char** argv) {
+    //free them
 
     // Creating a linked list structure using mymalloc
 
@@ -85,7 +86,7 @@ int main(int argc, char** argv) {
     // larger chunk with 4*26 bytes should split into 2 chunks of size 4*4 and 4*22 
     printf("Temp 6 has address: %p\n", temp6);  // Should be equal to temp1 and temp4
     printf("Temp 7 address is: %ld from Temp 6\n", (char*)temp7 - (char*)temp6);  // Should equal (4*4 + 5 (meta offset) = 21)
-    printf("Temp 8 has address: %p\n", temp8);  // Should be the same as temp3 and temp5 if merge and split works
+    printf("Temp 8 has address: %p\n---------------\n", temp8);  // Should be the same as temp3 and temp5 if merge and split works
     free(temp6);
     free(temp7);
     free(temp8);
@@ -101,6 +102,55 @@ int main(int argc, char** argv) {
     struct Node* error3 = malloc(sizeof(struct Node));
     free(error3);
     free(error3);
+    printf("---------------\n");
+    //Test overlapping chunks by filling up the memory array and freeing 25 times
+    int overlapping_detected = 0;
+    size_t total_payload_size = MAX_BYTES-(3*5); //5 is the size of each chunk header, going to allocate 3 large chunks
+    for (int x = 0; x < 50; x++){
+        size_t size_left = total_payload_size;
+        float pct[] = {(rand()%30 + 12)/100.0, (rand()%30 + 5)/100.0};
+        char* big_chunks[3];
+        size_t chunk_sizes[3];
+        for (int i = 1; i <= 3; i++){
+            char* ith_chunk;
+            size_t s;
+            if (i < 3){
+                s = (size_t) size_left*pct[i-1];
+               // printf("%ld at %d 1\n", s,x);
+                ith_chunk= malloc(s);
+                size_left -= s;
+            }
+            else{
+                s = size_left-1;
+                //printf("%ld at %d 2\n", s,x);
+                ith_chunk=malloc(s);
+            }
+            for (size_t j = 0; j < s; j++){
+                ith_chunk[j] = i+48;
+            }
+            big_chunks[i-1] = ith_chunk;
+            chunk_sizes[i-1] = s;
+        }
 
+        //Check that the last payload byte matches (no overlap)
+        for (int i = 0; i < 3; i++){
+            char* chunk_ptr = big_chunks[i];
+            for (int j = 0; j < chunk_sizes[i]; j++){
+                if (chunk_ptr[j] != i+1+48){
+                    printf("Overlapping detected in chunk %d: This should be %d, not %c!\n", i+1, i+1, chunk_ptr[j]);
+                    overlapping_detected = 1;
+                    break;
+                }
+            }
+            free(chunk_ptr);
+        }
 
+        if (overlapping_detected){
+            break;
+        }
+    }
+    
+    if (!overlapping_detected){
+        printf("Success: No overlapping between big chunks detected\n");
+    }
 }
