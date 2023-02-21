@@ -77,7 +77,7 @@ void* mymalloc(size_t size, char* file, int line){
 									memory[next_chunk_header_index+4] = 0;
 								}
 								else{
-									//merge these few bytes in with the never allocated space
+									//merge these few bytes in with the never-allocated space to the right
 									GETSIZE(next_chunk_header_index) = 0;
 									memory[next_chunk_header_index+4] = 0;
 								}
