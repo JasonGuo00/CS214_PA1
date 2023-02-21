@@ -132,7 +132,7 @@ void myfree(void* ptr, char* file, int line){
 	
 	if (memory[i+4] == 0){
 		//Was already freed or never allocated
-		printf("Error (%s line %d): Attempt to free freed/unallocated memory address\n",  file, line);
+		printf("Error (%s line %d): Attempt to free freed/unallocated space\n",  file, line);
 		return;
 	}
 	

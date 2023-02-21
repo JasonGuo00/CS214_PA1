@@ -43,12 +43,23 @@ Allocate 3 large chunks that use up the entirety of the memory array.
 
 Number every byte in each of the payloads to 1,2,3 for the first, second and third chunk respectively.
 
-Loop through every byte in the payload and make sure they did not change after a new chunk was allocated (i.e. make sure every byte in Chunk 1's payload is 1)
+Loop through every byte in the payload and make sure they did not change after a new chunk was allocated (i.e. make sure every byte in Chunk 1's payload is a '1')
 
-Do this 50 times and print if there is overlap/incorrect data detected in the payloads.
+Do this 50 times and print if there is overlap/incorrect data detected in the payloads, otherwise print success.
 
 ------------------------------------------------  
 ----------Performance Test Information----------  
 Stress Test 4: Create a linked list with 26 nodes and free it
 Stress Test 5: Allocate 120 chunks, each of random size from 1-28.  Free all of the chunks at the end.  
 ------------------------------------------------
+
+------------------------------------------------
+Error Reporting Design:
+
+For the "unable to allocate" error, we print this only if our for-loop through the memory array could not find enough sequential space for the chunk (rather, the for-loop ends and the payload pointer == 0)
+
+For the "pointer not obtained with malloc" error, we print this when the pointer is not within the bounds of the memory array. We test this by checking if the pointer's numerical address is less than the address at memory\[0\] or greater than the address at memory\[MAX_BYTES-1\].
+
+For the "pointer does not point to payload header" error, we print this when, while looping through every chunk header, we are unable to locate the pointer we are trying to free in any of the chunk headers.
+
+For the "attempt to free freed/unallocated space" error, we print this when the "isAllocated" byte of the payload pointer's chunk header is equal to 0, as this indicates that the chunk is not allocated/has been freed.
