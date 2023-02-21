@@ -77,8 +77,7 @@ void* mymalloc(size_t size, char* file, int line){
 									memory[next_chunk_header_index+4] = 0;
 								}
 								else{
-									//there are unallocated bytes so make the smallest chunk possible
-									//it will be expanded
+									//merge these few bytes in with the never allocated space
 									GETSIZE(next_chunk_header_index) = 0;
 									memory[next_chunk_header_index+4] = 0;
 								}
@@ -87,11 +86,6 @@ void* mymalloc(size_t size, char* file, int line){
 								//next chunk is also allocated, so just tag these bytes on
 								GETSIZE(new_header_index) += bytes_left;
 							}
-						}
-						else{
-							//end of the memory array, no room for another chunk so tag 
-							//the remaining bytes on
-							GETSIZE(new_header_index) += bytes_left;
 						}
 					}
 
