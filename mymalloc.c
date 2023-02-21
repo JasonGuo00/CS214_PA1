@@ -25,7 +25,6 @@ void* mymalloc(size_t size, char* file, int line){
 		char is_allocated = memory[i+4];
 		if (is_allocated == 0){
 			if (chunk_size == 0){
-				//printf("found unallocated space at %zu\n", i);
 				//This chunk has never been allocated before,
 				//meaning no bytes ahead of it have been allocated either, so we
 				//don't need to worry about overwriting
@@ -33,6 +32,7 @@ void* mymalloc(size_t size, char* file, int line){
 				GETSIZE(new_header_index) = size;
 				memory[new_header_index+4] = 1;
 				payload_ptr = &(memory[new_header_index+5]);
+				
 				//finished allocating, stop searching
 				break;
 			}
